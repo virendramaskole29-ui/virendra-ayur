@@ -42,32 +42,35 @@ export const Checkout = () => {
 
     const orderData = {
       orderId: newOrderId,
-      ...formData,
+      name: formData.name,
+      phone: formData.phone,
+      email: formData.email,
+      address: formData.address,
+      city: formData.city,
+      state: formData.state,
+      pincode: formData.pincode,
+      paymentMethod: formData.paymentMethod,
       items: items.map(item => `${item.name} (x${item.quantity})`).join(', '),
       total: cartTotal,
-      date: new Date().toISOString(),
+      date: new Date().toLocaleString('en-IN'),
     };
+
+    console.log('Sending full order data to Google Sheets:', orderData);
 
     try {
       const webhookUrl = (import.meta as any).env.VITE_GOOGLE_SHEETS_WEBHOOK_URL || "https://script.google.com/macros/s/AKfycbz7bjhQhHwnfwgTLUg1MxPCZDzjHpNQXz9xOliDuE3ciUkREgg_l42hGRVoNMgdXy9n/exec";
       
       if (webhookUrl) {
-        // Send data in background without waiting for Google's response
-        fetch(webhookUrl, {
+        await fetch(webhookUrl, {
           method: 'POST',
-          mode: 'no-cors', // Required for simple Google Apps Script web apps
+          mode: 'no-cors',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'text/plain',
           },
           body: JSON.stringify(orderData),
-        }).catch(console.error);
-      } else {
-        // Mock submission if no webhook URL is provided
-        console.log('Order Data (Mock Submission):', orderData);
+        });
+        console.log('Order data sent successfully');
       }
-
-      // Small delay for smooth UI transition (800ms instead of waiting 2-3 seconds for Google)
-      await new Promise(resolve => setTimeout(resolve, 800));
 
       setIsSuccess(true);
       clearCart();
@@ -94,10 +97,10 @@ export const Checkout = () => {
           Order Confirmed!
         </h1>
         <p className="text-earth-600 text-lg max-w-md mb-6">
-          Thank you for choosing Virendra Ayurveda. Your order has been successfully placed and will be shipped soon.
+          Thank you for choosing Virendra. Your order has been successfully placed and will be shipped soon.
         </p>
         
-        <div className="bg-white px-6 py-4 rounded-xl border border-earth-200 shadow-sm mb-8 flex items-center gap-4">
+        <div className="bg-white px-6 py-4 rounded-xl border border-earth-200 shadow-sm mb-6 flex items-center gap-4">
           <div className="text-left">
             <p className="text-xs text-earth-500 uppercase tracking-wider mb-1">Order ID</p>
             <p className="font-mono font-medium text-earth-900 text-lg">{orderId}</p>
@@ -109,6 +112,33 @@ export const Checkout = () => {
           >
             <Copy className="w-5 h-5" />
           </button>
+        </div>
+
+        {/* Order Tracking Section */}
+        <div className="bg-white p-6 rounded-2xl border border-earth-100 shadow-sm mb-8 w-full max-w-md text-left">
+          <h3 className="font-serif font-semibold text-earth-900 mb-4 flex items-center gap-2">
+            <ShieldCheck className="w-5 h-5 text-brand-600" />
+            Order Status
+          </h3>
+          <div className="space-y-4">
+            <div className="flex items-center gap-3">
+              <div className="w-3 h-3 bg-brand-500 rounded-full animate-pulse" />
+              <div>
+                <p className="text-sm font-medium text-earth-900">Processing</p>
+                <p className="text-xs text-earth-500">Your order is being prepared for shipment</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 opacity-40">
+              <div className="w-3 h-3 bg-earth-300 rounded-full" />
+              <div>
+                <p className="text-sm font-medium text-earth-900">Shipped</p>
+                <p className="text-xs text-earth-500">Waiting for courier pickup</p>
+              </div>
+            </div>
+          </div>
+          <p className="mt-6 text-xs text-earth-400 italic">
+            * Tracking updates will be sent to {formData.email}
+          </p>
         </div>
 
         <button 

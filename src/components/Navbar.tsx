@@ -37,7 +37,6 @@ export const Navbar = () => {
           <span className="font-serif text-3xl md:text-4xl font-light tracking-wide text-earth-900 group-hover:text-brand-700 transition-colors">
             Virendra
           </span>
-          <span className="text-[10px] tracking-[0.3em] uppercase text-brand-600 mt-1">Ayurveda</span>
         </Link>
 
         {/* Desktop Right Navigation & Cart */}

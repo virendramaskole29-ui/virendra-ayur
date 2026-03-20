@@ -74,7 +74,7 @@ export const Footer = () => {
         </div>
 
         <div className="border-t border-earth-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-earth-400">
-          <p>© {new Date().getFullYear()} Virendra Ayurveda. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Virendra. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-white transition-colors">Terms of Service</a>

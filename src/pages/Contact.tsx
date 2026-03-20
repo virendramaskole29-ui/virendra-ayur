@@ -21,7 +21,7 @@ export const Contact = () => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    const scriptUrl = import.meta.env.VITE_GOOGLE_SHEETS_WEBHOOK_URL || "https://script.google.com/macros/s/AKfycbz7bjhQhHwnfwgTLUg1MxPCZDzjHpNQXz9xOliDuE3ciUkREgg_l42hGRVoNMgdXy9n/exec";
+    const scriptUrl = (import.meta as any).env.VITE_GOOGLE_SHEETS_WEBHOOK_URL || "https://script.google.com/macros/s/AKfycbz7bjhQhHwnfwgTLUg1MxPCZDzjHpNQXz9xOliDuE3ciUkREgg_l42hGRVoNMgdXy9n/exec";
 
     if (!scriptUrl) {
       console.warn("Google Sheet Webhook URL is not configured. Mocking submission.");
@@ -34,18 +34,14 @@ export const Contact = () => {
     }
 
     try {
-      // Send data in background without waiting for Google's response
-      fetch(scriptUrl, {
+      await fetch(scriptUrl, {
         method: 'POST',
         mode: 'no-cors', // Required to avoid CORS issues with Google Apps Script
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'text/plain',
         },
         body: JSON.stringify(formData)
-      }).catch(console.error);
-      
-      // Small delay for smooth UI transition (800ms instead of waiting 2-3 seconds for Google)
-      await new Promise(resolve => setTimeout(resolve, 800));
+      });
       
       setIsSubmitting(false);
       setIsSuccess(true);

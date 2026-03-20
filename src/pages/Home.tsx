@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Leaf, ShieldCheck } from 'lucide-react';
-import { products } from '../data/products';
 import { ProductCard } from '../components/ProductCard';
+import { db } from '../firebase';
+import { collection, onSnapshot, query, limit } from 'firebase/firestore';
 
 const heroImages = [
   "https://images.unsplash.com/photo-1611078813455-84227c813098?auto=format&fit=crop&q=80&w=1200",
@@ -13,8 +14,16 @@ const heroImages = [
 ];
 
 export const Home = () => {
-  const featuredProducts = products.slice(0, 8);
+  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
   const [currentImage, setCurrentImage] = useState(0);
+
+  useEffect(() => {
+    const q = query(collection(db, 'products'), limit(8));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setFeaturedProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {

@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../store/CartContext';
 import { formatPrice } from '../lib/utils';
 import { CheckCircle2, ArrowRight, ShieldCheck, Copy } from 'lucide-react';
+import { db } from '../firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export const Checkout = () => {
   const { items, cartTotal, clearCart } = useCart();
@@ -42,34 +44,54 @@ export const Checkout = () => {
 
     const orderData = {
       orderId: newOrderId,
-      name: formData.name,
-      phone: formData.phone,
-      email: formData.email,
+      customerName: formData.name,
+      customerPhone: formData.phone,
+      customerEmail: formData.email,
       address: formData.address,
       city: formData.city,
       state: formData.state,
       pincode: formData.pincode,
       paymentMethod: formData.paymentMethod,
-      items: items.map(item => `${item.name} (x${item.quantity})`).join(', '),
+      items: items.map(item => ({
+        id: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity
+      })),
       total: cartTotal,
-      date: new Date().toLocaleString('en-IN'),
+      status: 'pending',
+      createdAt: serverTimestamp(),
     };
 
-    console.log('Sending full order data to Google Sheets:', orderData);
+    console.log('Saving order to Firestore and Google Sheets:', orderData);
 
     try {
+      // 1. Save to Firestore
+      await addDoc(collection(db, 'orders'), orderData);
+      console.log('Order saved to Firestore');
+
+      // 2. Save to Google Sheets (Legacy/Backup)
       const webhookUrl = (import.meta as any).env.VITE_GOOGLE_SHEETS_WEBHOOK_URL || "https://script.google.com/macros/s/AKfycbz7bjhQhHwnfwgTLUg1MxPCZDzjHpNQXz9xOliDuE3ciUkREgg_l42hGRVoNMgdXy9n/exec";
       
       if (webhookUrl) {
+        const sheetData = {
+          ...orderData,
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          items: items.map(item => `${item.name} (x${item.quantity})`).join(', '),
+          date: new Date().toLocaleString('en-IN'),
+        };
+
         await fetch(webhookUrl, {
           method: 'POST',
           mode: 'no-cors',
           headers: {
             'Content-Type': 'text/plain',
           },
-          body: JSON.stringify(orderData),
+          body: JSON.stringify(sheetData),
         });
-        console.log('Order data sent successfully');
+        console.log('Order data sent to Google Sheets');
       }
 
       setIsSuccess(true);

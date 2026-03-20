@@ -15,8 +15,15 @@ import { ProductDetail } from './pages/ProductDetail';
 import { Checkout } from './pages/Checkout';
 import { About } from './pages/About';
 import { Contact } from './pages/Contact';
+import { Admin } from './pages/Admin';
+import { useEffect } from 'react';
+import { seedDatabase } from './lib/db';
 
 export default function App() {
+  useEffect(() => {
+    seedDatabase();
+  }, []);
+
   return (
     <CartProvider>
       <Router>
@@ -32,6 +39,7 @@ export default function App() {
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/admin" element={<Admin />} />
             </Routes>
           </main>
           <Footer />

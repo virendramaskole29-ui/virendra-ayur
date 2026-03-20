@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { Plus, Edit2, Trash2, X, Save, Image as ImageIcon } from 'lucide-react';
+import { getImageUrl } from '../lib/utils';
 
 export const AdminProducts = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -13,7 +14,10 @@ export const AdminProducts = () => {
     category: 'Supplements',
     image: '',
     description: '',
-    stock: '100'
+    stock: '100',
+    benefits: '',
+    ingredients: '',
+    isFeatured: false
   });
 
   useEffect(() => {
@@ -30,6 +34,9 @@ export const AdminProducts = () => {
       ...formData,
       price: parseFloat(formData.price),
       stock: parseInt(formData.stock),
+      benefits: formData.benefits.split(',').map(s => s.trim()).filter(Boolean),
+      ingredients: formData.ingredients.split(',').map(s => s.trim()).filter(Boolean),
+      isFeatured: formData.isFeatured,
       updatedAt: serverTimestamp()
     };
 
@@ -44,7 +51,17 @@ export const AdminProducts = () => {
       }
       setIsModalOpen(false);
       setEditingProduct(null);
-      setFormData({ name: '', price: '', category: 'Supplements', image: '', description: '', stock: '100' });
+      setFormData({ 
+        name: '', 
+        price: '', 
+        category: 'Supplements', 
+        image: '', 
+        description: '', 
+        stock: '100',
+        benefits: '',
+        ingredients: '',
+        isFeatured: false
+      });
     } catch (error) {
       console.error("Error saving product:", error);
     }
@@ -58,7 +75,10 @@ export const AdminProducts = () => {
       category: product.category,
       image: product.image,
       description: product.description || '',
-      stock: (product.stock || 100).toString()
+      stock: (product.stock || 100).toString(),
+      benefits: (product.benefits || []).join(', '),
+      ingredients: (product.ingredients || []).join(', '),
+      isFeatured: product.isFeatured || false
     });
     setIsModalOpen(true);
   };
@@ -80,7 +100,16 @@ export const AdminProducts = () => {
         <button 
           onClick={() => {
             setEditingProduct(null);
-            setFormData({ name: '', price: '', category: 'Supplements', image: '', description: '', stock: '100' });
+            setFormData({ 
+              name: '', 
+              price: '', 
+              category: 'Supplements', 
+              image: '', 
+              description: '', 
+              stock: '100',
+              benefits: '',
+              ingredients: ''
+            });
             setIsModalOpen(true);
           }}
           className="flex items-center gap-2 px-6 py-3 bg-brand-700 text-white rounded-xl hover:bg-brand-800 transition-colors"
@@ -98,6 +127,7 @@ export const AdminProducts = () => {
               <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-earth-600">Category</th>
               <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-earth-600">Price</th>
               <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-earth-600">Stock</th>
+              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-earth-600">Featured</th>
               <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-earth-600 text-right">Actions</th>
             </tr>
           </thead>
@@ -106,7 +136,16 @@ export const AdminProducts = () => {
               <tr key={product.id} className="hover:bg-brand-50/50 transition-colors">
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-4">
-                    <img src={product.image} alt="" className="w-12 h-12 rounded-lg object-cover" />
+                    <img 
+                      src={getImageUrl(product.image)} 
+                      alt="" 
+                      className="w-12 h-12 rounded-lg object-cover" 
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=800';
+                      }}
+                    />
                     <div>
                       <p className="font-medium text-earth-900">{product.name}</p>
                       <p className="text-xs text-earth-500 truncate max-w-[200px]">{product.description}</p>
@@ -120,6 +159,13 @@ export const AdminProducts = () => {
                 </td>
                 <td className="px-6 py-4 font-medium text-earth-900">₹{product.price}</td>
                 <td className="px-6 py-4 text-earth-600">{product.stock}</td>
+                <td className="px-6 py-4">
+                  {product.isFeatured ? (
+                    <span className="px-2 py-1 bg-amber-100 text-amber-700 text-[10px] rounded-full font-bold uppercase tracking-wider">Featured</span>
+                  ) : (
+                    <span className="text-earth-300 text-[10px] uppercase tracking-wider">Regular</span>
+                  )}
+                </td>
                 <td className="px-6 py-4 text-right">
                   <div className="flex items-center justify-end gap-2">
                     <button 
@@ -179,6 +225,8 @@ export const AdminProducts = () => {
                     <option>Skincare</option>
                     <option>Haircare</option>
                     <option>Immunity</option>
+                    <option>Digestion</option>
+                    <option>Wellness</option>
                   </select>
                 </div>
                 <div className="space-y-2">
@@ -217,7 +265,12 @@ export const AdminProducts = () => {
                     placeholder="https://images.unsplash.com/..."
                   />
                   {formData.image && (
-                    <img src={formData.image} alt="Preview" className="w-12 h-12 rounded-lg object-cover border border-brand-200" />
+                    <img 
+                      src={getImageUrl(formData.image)} 
+                      alt="Preview" 
+                      className="w-12 h-12 rounded-lg object-cover border border-brand-200" 
+                      referrerPolicy="no-referrer"
+                    />
                   )}
                 </div>
               </div>
@@ -225,12 +278,48 @@ export const AdminProducts = () => {
               <div className="space-y-2">
                 <label className="text-sm font-medium text-earth-700">Description</label>
                 <textarea 
-                  rows={4}
+                  rows={3}
                   value={formData.description}
                   onChange={e => setFormData({...formData, description: e.target.value})}
                   className="w-full px-4 py-3 rounded-xl border border-brand-200 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none resize-none"
                   placeholder="Tell customers about this product..."
                 />
+              </div>
+
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-earth-700">Benefits (comma separated)</label>
+                  <input 
+                    type="text"
+                    value={formData.benefits}
+                    onChange={e => setFormData({...formData, benefits: e.target.value})}
+                    className="w-full px-4 py-3 rounded-xl border border-brand-200 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none"
+                    placeholder="e.g. Boosts immunity, Improves digestion"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-earth-700">Ingredients (comma separated)</label>
+                  <input 
+                    type="text"
+                    value={formData.ingredients}
+                    onChange={e => setFormData({...formData, ingredients: e.target.value})}
+                    className="w-full px-4 py-3 rounded-xl border border-brand-200 focus:ring-2 focus:ring-brand-500 focus:border-transparent outline-none"
+                    placeholder="e.g. Ashwagandha, Turmeric"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 p-4 bg-brand-50 rounded-xl border border-brand-100">
+                <input 
+                  type="checkbox"
+                  id="isFeatured"
+                  checked={formData.isFeatured}
+                  onChange={e => setFormData({...formData, isFeatured: e.target.checked})}
+                  className="w-5 h-5 rounded border-brand-300 text-brand-600 focus:ring-brand-500"
+                />
+                <label htmlFor="isFeatured" className="text-sm font-medium text-earth-700 cursor-pointer">
+                  Mark as Featured Product (will show on Home page)
+                </label>
               </div>
 
               <div className="flex gap-4 pt-4">

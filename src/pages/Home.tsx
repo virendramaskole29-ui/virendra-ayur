@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Leaf, ShieldCheck } from 'lucide-react';
+import { getImageUrl } from '../lib/utils';
 import { ProductCard } from '../components/ProductCard';
 import { db } from '../firebase';
-import { collection, onSnapshot, query, limit } from 'firebase/firestore';
+import { collection, onSnapshot, query, where, limit } from 'firebase/firestore';
 
 const heroImages = [
+  "https://drive.google.com/uc?export=view&id=1TeWZGit2uwN2l9wPk6aJg1uolFMaGzg_",
   "https://images.unsplash.com/photo-1611078813455-84227c813098?auto=format&fit=crop&q=80&w=1200",
   "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&q=80&w=1200",
-  "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=1200",
-  "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&q=80&w=1200"
+  "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=1200"
 ];
 
 export const Home = () => {
@@ -18,9 +19,18 @@ export const Home = () => {
   const [currentImage, setCurrentImage] = useState(0);
 
   useEffect(() => {
-    const q = query(collection(db, 'products'), limit(8));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      setFeaturedProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    // First try to fetch featured products
+    const featuredQ = query(collection(db, 'products'), where('isFeatured', '==', true), limit(8));
+    const unsubscribe = onSnapshot(featuredQ, (snapshot) => {
+      if (!snapshot.empty) {
+        setFeaturedProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      } else {
+        // Fallback to latest 8 products if none are featured
+        const latestQ = query(collection(db, 'products'), limit(8));
+        onSnapshot(latestQ, (latestSnapshot) => {
+          setFeaturedProducts(latestSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        });
+      }
     });
     return () => unsubscribe();
   }, []);
@@ -92,12 +102,16 @@ export const Home = () => {
               {heroImages.map((img, index) => (
                 <img 
                   key={img}
-                  src={img} 
+                  src={getImageUrl(img)} 
                   alt={`Premium Ayurvedic Herbs ${index + 1}`}
                   className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-in-out ${
                     index === currentImage ? 'opacity-100 scale-100' : 'opacity-0 scale-105'
                   }`}
                   referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=1200';
+                  }}
                 />
               ))}
               {/* Soft inner shadow overlay */}

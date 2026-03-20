@@ -98,6 +98,44 @@ export const About = () => {
           </div>
         </div>
       </section>
+      {/* Founder Section */}
+      <section className="py-24 bg-earth-50">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="flex flex-col md:flex-row items-center gap-12 md:gap-20">
+            <div className="w-full md:w-1/2">
+              <div className="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl">
+                <img 
+                  src="https://drive.google.com/uc?export=view&id=1TeWZGit2uwN2l9wPk6aJg1uolFMaGzg_" 
+                  alt="Virendra Maskole - Founder" 
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800';
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-earth-900/40 to-transparent"></div>
+              </div>
+            </div>
+            <div className="w-full md:w-1/2 text-center md:text-left">
+              <span className="text-brand-600 font-medium tracking-widest uppercase text-xs mb-4 block">The Visionary</span>
+              <h2 className="text-3xl md:text-4xl font-serif font-semibold text-earth-900 mb-6">
+                Virendra Maskole
+              </h2>
+              <p className="text-earth-600 text-lg leading-relaxed mb-6 italic">
+                "Ayurveda is not just a system of medicine; it is a way of life that brings us back to our roots and restores the balance between mind, body, and spirit."
+              </p>
+              <p className="text-earth-600 leading-relaxed mb-8">
+                Virendra founded this brand with a mission to simplify Ayurveda for the modern generation. By combining ancient wisdom with contemporary standards of purity and transparency, he aims to make holistic wellness accessible to everyone, everywhere.
+              </p>
+              <div className="flex flex-col gap-1">
+                <span className="font-serif text-xl font-medium text-earth-900">Virendra Maskole</span>
+                <span className="text-earth-400 text-sm">Founder & CEO</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

@@ -34,9 +34,23 @@ export const Navbar = () => {
 
         {/* Centered Logo */}
         <Link to="/" className="flex flex-col items-center justify-center flex-1 text-center group">
-          <span className="font-serif text-3xl md:text-4xl font-light tracking-wide text-earth-900 group-hover:text-brand-700 transition-colors">
-            Virendra
-          </span>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-brand-200 group-hover:border-brand-500 transition-colors">
+              <img 
+                src="https://drive.google.com/uc?export=view&id=1TeWZGit2uwN2l9wPk6aJg1uolFMaGzg_" 
+                alt="Virendra" 
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800';
+                }}
+              />
+            </div>
+            <span className="font-serif text-3xl md:text-4xl font-light tracking-wide text-earth-900 group-hover:text-brand-700 transition-colors">
+              Virendra
+            </span>
+          </div>
         </Link>
 
         {/* Desktop Right Navigation & Cart */}
@@ -95,7 +109,19 @@ export const Navbar = () => {
               className="fixed inset-y-0 left-0 w-3/4 max-w-sm bg-brand-50 z-50 shadow-2xl md:hidden flex flex-col"
             >
               <div className="h-24 px-6 flex items-center justify-between border-b border-brand-200/50">
-                <Link to="/" className="flex flex-col">
+                <Link to="/" className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full overflow-hidden border border-brand-200">
+                    <img 
+                      src="https://drive.google.com/uc?export=view&id=1TeWZGit2uwN2l9wPk6aJg1uolFMaGzg_" 
+                      alt="Virendra" 
+                      className="w-full h-full object-cover"
+                      referrerPolicy="no-referrer"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800';
+                      }}
+                    />
+                  </div>
                   <span className="font-serif text-2xl font-light tracking-wide text-earth-900">
                     Virendra
                   </span>

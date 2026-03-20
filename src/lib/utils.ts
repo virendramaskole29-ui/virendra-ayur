@@ -12,3 +12,17 @@ export const formatPrice = (price: number) => {
     maximumFractionDigits: 0,
   }).format(price);
 };
+
+export const getImageUrl = (url: string) => {
+  if (!url) return 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=800';
+  
+  // Handle Google Drive links
+  if (url.includes('drive.google.com')) {
+    const idMatch = url.match(/\/d\/([^/]+)/) || url.match(/id=([^&]+)/);
+    if (idMatch && idMatch[1]) {
+      return `https://drive.google.com/uc?export=view&id=${idMatch[1]}`;
+    }
+  }
+  
+  return url;
+};

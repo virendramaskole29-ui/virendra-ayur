@@ -5,6 +5,7 @@ import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { LayoutDashboard, ShoppingCart, Package, LogOut, Plus, ShieldCheck } from 'lucide-react';
 import { AdminProducts } from '../components/AdminProducts';
 import { AdminOrders } from '../components/AdminOrders';
+import { seedDatabase } from '../lib/db';
 
 export const Admin = () => {
   const [user, setUser] = useState<any>(null);
@@ -28,6 +29,9 @@ export const Admin = () => {
 
   useEffect(() => {
     if (!isAdmin) return;
+
+    // Seed database if empty
+    seedDatabase();
 
     // Fetch stats
     const unsubProducts = onSnapshot(collection(db, 'products'), (snapshot) => {

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingBag } from 'lucide-react';
 import { Product } from '../data/products';
-import { formatPrice } from '../lib/utils';
+import { formatPrice, getImageUrl } from '../lib/utils';
 import { useCart } from '../store/CartContext';
 
 interface ProductCardProps {
@@ -16,11 +16,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     <div className="group flex flex-col bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-earth-100 h-full">
       <Link to={`/product/${product.id}`} className="relative aspect-[4/5] overflow-hidden bg-brand-50 block">
         <img 
-          src={product.image} 
+          src={getImageUrl(product.image)} 
           alt={product.name} 
           className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700 ease-out"
-          loading="lazy"
           referrerPolicy="no-referrer"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.src = 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=800';
+          }}
         />
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-500"></div>
         <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] tracking-widest uppercase text-brand-700 font-medium shadow-sm">

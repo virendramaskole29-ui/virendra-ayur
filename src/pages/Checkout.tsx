@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../store/CartContext';
-import { formatPrice } from '../lib/utils';
+import { formatPrice, getImageUrl } from '../lib/utils';
 import { CheckCircle2, ArrowRight, ShieldCheck, Copy } from 'lucide-react';
 import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
@@ -335,10 +335,14 @@ export const Checkout = () => {
                   <div key={item.id} className="flex gap-4">
                     <div className="w-16 h-16 rounded-lg overflow-hidden bg-earth-100 shrink-0">
                       <img 
-                        src={item.image} 
+                        src={getImageUrl(item.image)} 
                         alt={item.name} 
                         className="w-full h-full object-cover"
                         referrerPolicy="no-referrer"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=800';
+                        }}
                       />
                     </div>
                     <div className="flex-1">

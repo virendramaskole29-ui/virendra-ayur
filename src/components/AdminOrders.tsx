@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
-import { collection, onSnapshot, query, orderBy, updateDoc, doc } from 'firebase/firestore';
-import { ShoppingBag, Clock, CheckCircle, Truck, XCircle, ChevronDown, ExternalLink } from 'lucide-react';
+import { collection, onSnapshot, query, orderBy, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import { ShoppingBag, Clock, CheckCircle, Truck, XCircle, ChevronDown, ExternalLink, Trash2 } from 'lucide-react';
 
 export const AdminOrders = () => {
   const [orders, setOrders] = useState<any[]>([]);
@@ -20,6 +20,16 @@ export const AdminOrders = () => {
       await updateDoc(doc(db, 'orders', orderId), { status: newStatus });
     } catch (error) {
       console.error("Error updating status:", error);
+    }
+  };
+
+  const deleteOrder = async (id: string) => {
+    if (window.confirm('Are you sure you want to delete this order?')) {
+      try {
+        await deleteDoc(doc(db, 'orders', id));
+      } catch (error) {
+        console.error("Error deleting order:", error);
+      }
     }
   };
 
@@ -90,6 +100,13 @@ export const AdminOrders = () => {
                   </select>
                   <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none opacity-50" />
                 </div>
+                <button 
+                  onClick={() => deleteOrder(order.id)}
+                  className="p-2 text-earth-400 hover:text-red-600 transition-colors"
+                  title="Delete Order"
+                >
+                  <Trash2 className="w-5 h-5" />
+                </button>
               </div>
             </div>
 

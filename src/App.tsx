@@ -16,14 +16,8 @@ import { Checkout } from './pages/Checkout';
 import { About } from './pages/About';
 import { Contact } from './pages/Contact';
 import { Admin } from './pages/Admin';
-import { useEffect } from 'react';
-import { seedDatabase } from './lib/db';
 
 export default function App() {
-  useEffect(() => {
-    seedDatabase();
-  }, []);
-
   return (
     <CartProvider>
       <Router>

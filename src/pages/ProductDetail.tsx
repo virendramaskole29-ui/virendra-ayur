@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { useCart } from '../store/CartContext';
-import { formatPrice } from '../lib/utils';
+import { formatPrice, getImageUrl } from '../lib/utils';
 import { Minus, Plus, ShoppingBag, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { db } from '../firebase';
 import { doc, getDoc } from 'firebase/firestore';
@@ -72,10 +72,14 @@ export const ProductDetail = () => {
             {/* Image Gallery */}
             <div className="bg-earth-100 aspect-square md:aspect-auto">
               <img 
-                src={product.image} 
+                src={getImageUrl(product.image)} 
                 alt={product.name} 
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=800';
+                }}
               />
             </div>
 
@@ -102,7 +106,7 @@ export const ProductDetail = () => {
               <div className="mb-8">
                 <h3 className="font-serif text-lg font-semibold text-earth-900 mb-4">Key Benefits</h3>
                 <ul className="space-y-3">
-                  {product.benefits.map((benefit, index) => (
+                  {product.benefits?.map((benefit: string, index: number) => (
                     <li key={index} className="flex items-start gap-3 text-earth-600">
                       <CheckCircle2 className="w-5 h-5 text-brand-500 shrink-0 mt-0.5" />
                       <span>{benefit}</span>
@@ -114,7 +118,7 @@ export const ProductDetail = () => {
               <div className="mb-10">
                 <h3 className="font-serif text-lg font-semibold text-earth-900 mb-3">Key Ingredients</h3>
                 <div className="flex flex-wrap gap-2">
-                  {product.ingredients.map((ingredient, index) => (
+                  {product.ingredients?.map((ingredient: string, index: number) => (
                     <span key={index} className="px-4 py-2 bg-earth-100 text-earth-700 rounded-full text-sm">
                       {ingredient}
                     </span>

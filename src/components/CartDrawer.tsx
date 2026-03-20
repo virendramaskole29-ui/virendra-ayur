@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Minus, Plus, ShoppingBag, ArrowRight } from 'lucide-react';
 import { useCart } from '../store/CartContext';
-import { formatPrice } from '../lib/utils';
+import { formatPrice, getImageUrl } from '../lib/utils';
 import { Link, useNavigate } from 'react-router-dom';
 
 export const CartDrawer = () => {
@@ -70,10 +70,14 @@ export const CartDrawer = () => {
                     <div key={item.id} className="flex gap-4">
                       <div className="w-24 h-24 rounded-xl overflow-hidden bg-earth-100 shrink-0">
                         <img 
-                          src={item.image} 
+                          src={getImageUrl(item.image)} 
                           alt={item.name} 
                           className="w-full h-full object-cover"
                           referrerPolicy="no-referrer"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.src = 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=800';
+                          }}
                         />
                       </div>
                       <div className="flex flex-col justify-between flex-1">

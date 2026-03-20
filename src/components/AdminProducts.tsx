@@ -191,8 +191,8 @@ export const AdminProducts = () => {
       {/* Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-earth-900/50 backdrop-blur-sm">
-          <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden">
-            <div className="px-8 py-6 border-b border-brand-200 flex items-center justify-between">
+          <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="px-8 py-6 border-b border-brand-200 flex items-center justify-between flex-shrink-0">
               <h2 className="text-2xl font-serif font-bold text-earth-900">
                 {editingProduct ? 'Edit Product' : 'Add New Product'}
               </h2>
@@ -201,7 +201,8 @@ export const AdminProducts = () => {
               </button>
             </div>
             
-            <form onSubmit={handleSubmit} className="p-8 space-y-6">
+            <div className="overflow-y-auto flex-grow">
+              <form onSubmit={handleSubmit} className="p-8 space-y-6">
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-earth-700">Product Name</label>
@@ -341,7 +342,8 @@ export const AdminProducts = () => {
             </form>
           </div>
         </div>
-      )}
+      </div>
+    )}
     </div>
   );
 };

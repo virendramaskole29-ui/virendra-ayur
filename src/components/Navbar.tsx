@@ -1,14 +1,26 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, Menu, X } from 'lucide-react';
+import { ShoppingBag, Menu, X, ShieldCheck } from 'lucide-react';
 import { useCart } from '../store/CartContext';
-import { cn } from '../lib/utils';
+import { cn, getImageUrl } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
+import { auth } from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 
 export const Navbar = () => {
   const { cartCount, setIsCartOpen } = useCart();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [user, setUser] = React.useState<any>(null);
   const location = useLocation();
+
+  React.useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const isAdmin = user?.email === 'virendramaskole29@gmail.com';
 
   // Close mobile menu when route changes
   React.useEffect(() => {
@@ -30,6 +42,12 @@ export const Navbar = () => {
         <nav className="hidden md:flex items-center gap-8 flex-1">
           <Link to="/" className={cn("text-xs tracking-[0.15em] uppercase transition-colors hover:text-brand-600", location.pathname === '/' ? "text-brand-700 font-medium" : "text-earth-500")}>Home</Link>
           <Link to="/shop" className={cn("text-xs tracking-[0.15em] uppercase transition-colors hover:text-brand-600", location.pathname === '/shop' ? "text-brand-700 font-medium" : "text-earth-500")}>Shop</Link>
+          {isAdmin && (
+            <Link to="/admin" className={cn("text-xs tracking-[0.15em] uppercase transition-colors hover:text-brand-600 flex items-center gap-1.5", location.pathname === '/admin' ? "text-brand-700 font-medium" : "text-earth-500")}>
+              <ShieldCheck className="w-3.5 h-3.5" />
+              Admin
+            </Link>
+          )}
         </nav>
 
         {/* Centered Logo */}
@@ -37,7 +55,7 @@ export const Navbar = () => {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-brand-200 group-hover:border-brand-500 transition-colors">
               <img 
-                src="https://drive.google.com/uc?export=view&id=1TeWZGit2uwN2l9wPk6aJg1uolFMaGzg_" 
+                src={getImageUrl("https://drive.google.com/uc?export=view&id=1TeWZGit2uwN2l9wPk6aJg1uolFMaGzg_")} 
                 alt="Virendra" 
                 className="w-full h-full object-cover"
                 referrerPolicy="no-referrer"
@@ -112,7 +130,7 @@ export const Navbar = () => {
                 <Link to="/" className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full overflow-hidden border border-brand-200">
                     <img 
-                      src="https://drive.google.com/uc?export=view&id=1TeWZGit2uwN2l9wPk6aJg1uolFMaGzg_" 
+                      src={getImageUrl("https://drive.google.com/uc?export=view&id=1TeWZGit2uwN2l9wPk6aJg1uolFMaGzg_")} 
                       alt="Virendra" 
                       className="w-full h-full object-cover"
                       referrerPolicy="no-referrer"
@@ -137,6 +155,7 @@ export const Navbar = () => {
                 {[
                   { name: 'Home', path: '/' },
                   { name: 'Shop', path: '/shop' },
+                  ...(isAdmin ? [{ name: 'Admin Panel', path: '/admin' }] : []),
                   { name: 'Our Story', path: '/about' },
                   { name: 'Contact', path: '/contact' },
                 ].map((link) => (

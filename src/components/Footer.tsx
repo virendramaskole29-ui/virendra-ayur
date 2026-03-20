@@ -2,7 +2,21 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Leaf, Instagram, Facebook, Twitter, Mail, MapPin, Phone } from 'lucide-react';
 
+import { auth } from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+
 export const Footer = () => {
+  const [user, setUser] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const isAdmin = user?.email === 'virendramaskole29@gmail.com';
+
   return (
     <footer className="bg-earth-900 text-earth-100 pt-16 pb-8">
       <div className="container mx-auto px-4">
@@ -38,6 +52,9 @@ export const Footer = () => {
               <li><Link to="/shop" className="text-earth-300 hover:text-brand-400 transition-colors">Shop All</Link></li>
               <li><Link to="/about" className="text-earth-300 hover:text-brand-400 transition-colors">Our Story</Link></li>
               <li><Link to="/contact" className="text-earth-300 hover:text-brand-400 transition-colors">Contact Us</Link></li>
+              {isAdmin && (
+                <li><Link to="/admin" className="text-brand-400 hover:text-white transition-colors font-medium">Admin Panel</Link></li>
+              )}
               <li><a href="#" className="text-earth-300 hover:text-brand-400 transition-colors">FAQs</a></li>
             </ul>
           </div>

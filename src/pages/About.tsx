@@ -1,5 +1,6 @@
 import React from 'react';
 import { Leaf, Heart, ShieldCheck, Sprout } from 'lucide-react';
+import { getImageUrl } from '../lib/utils';
 
 export const About = () => {
   return (
@@ -105,7 +106,7 @@ export const About = () => {
             <div className="w-full md:w-1/2">
               <div className="relative aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl">
                 <img 
-                  src="https://drive.google.com/uc?export=view&id=1TeWZGit2uwN2l9wPk6aJg1uolFMaGzg_" 
+                  src={getImageUrl("https://drive.google.com/uc?export=view&id=1TeWZGit2uwN2l9wPk6aJg1uolFMaGzg_")} 
                   alt="Virendra Maskole - Founder" 
                   className="w-full h-full object-cover"
                   referrerPolicy="no-referrer"

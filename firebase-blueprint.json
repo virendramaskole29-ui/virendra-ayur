@@ -50,6 +50,23 @@
         "role": { "type": "string", "enum": ["admin"] }
       },
       "required": ["uid", "email", "role"]
+    },
+    "Booking": {
+      "title": "Booking",
+      "description": "A customer appointment booking",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "phone": { "type": "string" },
+        "treatment": { "type": "string" },
+        "date": { "type": "string", "format": "date" },
+        "time": { "type": "string", "format": "time" },
+        "message": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "cancelled"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "phone", "treatment", "date", "time", "status"]
     }
   },
   "firestore": {
@@ -64,6 +81,10 @@
     "/admins/{adminId}": {
       "schema": "Admin",
       "description": "Admin users"
+    },
+    "/bookings/{bookingId}": {
+      "schema": "Booking",
+      "description": "Appointment bookings"
     }
   }
 }

@@ -5,29 +5,29 @@
   --font-sans: "Montserrat", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Cormorant Garamond", ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
   
-  /* Warm, boutique, personal palette */
-  --color-brand-50: #fdfaf6;
-  --color-brand-100: #f5efe6;
-  --color-brand-200: #e8dcc7;
-  --color-brand-300: #d4c1a5;
-  --color-brand-400: #bfa07f;
-  --color-brand-500: #ab825c;
-  --color-brand-600: #9c6f4a;
-  --color-brand-700: #82583d;
-  --color-brand-800: #6b4a35;
-  --color-brand-900: #573d2d;
+  /* Ayurvedic Forest Palette */
+  --color-brand-50: #f7f9f5;
+  --color-brand-100: #eef2ea;
+  --color-brand-200: #dce5d5;
+  --color-brand-300: #c1d0b5;
+  --color-brand-400: #9cb48a;
+  --color-brand-500: #7a9864;
+  --color-brand-600: #5f7a4d;
+  --color-brand-700: #4a603c;
+  --color-brand-800: #3b4d30;
+  --color-brand-900: #2d3b25;
   
-  /* Deep Olive / Forest for contrast */
-  --color-earth-50: #fafaf9;
-  --color-earth-100: #f5f5f4;
-  --color-earth-200: #e7e5e4;
-  --color-earth-300: #d6d3d1;
-  --color-earth-400: #a8a29e;
-  --color-earth-500: #78716c;
-  --color-earth-600: #57534e;
-  --color-earth-700: #44403c;
-  --color-earth-800: #292524;
-  --color-earth-900: #1c1917;
+  /* Earthy Browns */
+  --color-earth-50: #faf9f8;
+  --color-earth-100: #f5f2f0;
+  --color-earth-200: #e8e2dd;
+  --color-earth-300: #d4c8bf;
+  --color-earth-400: #bfa899;
+  --color-earth-500: #a68572;
+  --color-earth-600: #8c6a59;
+  --color-earth-700: #735446;
+  --color-earth-800: #594136;
+  --color-earth-900: #3d2d25;
 }
 
 body {

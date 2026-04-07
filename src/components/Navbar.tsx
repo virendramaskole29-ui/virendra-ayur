@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingBag, Menu, X, ShieldCheck } from 'lucide-react';
+import { ShoppingBag, Menu, X, ShieldCheck, Leaf } from 'lucide-react';
 import { useCart } from '../store/CartContext';
 import { cn, getImageUrl } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
@@ -53,42 +53,30 @@ export const Navbar = () => {
         {/* Centered Logo */}
         <Link to="/" className="flex flex-col items-center justify-center flex-1 text-center group">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-brand-200 group-hover:border-brand-500 transition-colors">
-              <img 
-                src={getImageUrl("https://drive.google.com/uc?export=view&id=1TeWZGit2uwN2l9wPk6aJg1uolFMaGzg_")} 
-                alt="Virendra" 
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800';
-                }}
-              />
+            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-brand-200 group-hover:border-brand-500 transition-colors flex items-center justify-center bg-brand-100">
+              <Leaf className="w-6 h-6 text-brand-700" />
             </div>
-            <span className="font-serif text-3xl md:text-4xl font-light tracking-wide text-earth-900 group-hover:text-brand-700 transition-colors">
-              Virendra
+            <span className="font-serif text-2xl md:text-3xl font-light tracking-wide text-earth-900 group-hover:text-brand-700 transition-colors">
+              Chanchal Ayurvedic
             </span>
           </div>
         </Link>
 
         {/* Desktop Right Navigation & Cart */}
         <nav className="hidden md:flex items-center justify-end gap-8 flex-1">
-          <Link to="/about" className={cn("text-xs tracking-[0.15em] uppercase transition-colors hover:text-brand-600", location.pathname === '/about' ? "text-brand-700 font-medium" : "text-earth-500")}>Story</Link>
+          <Link to="/about" className={cn("text-xs tracking-[0.15em] uppercase transition-colors hover:text-brand-600", location.pathname === '/about' ? "text-brand-700 font-medium" : "text-earth-500")}>About</Link>
           <Link to="/contact" className={cn("text-xs tracking-[0.15em] uppercase transition-colors hover:text-brand-600", location.pathname === '/contact' ? "text-brand-700 font-medium" : "text-earth-500")}>Contact</Link>
           
           <button 
-            className="relative p-2 text-earth-700 hover:text-brand-700 transition-colors flex items-center gap-2"
+            className="relative p-2 text-earth-700 hover:text-brand-700 transition-colors"
             onClick={() => setIsCartOpen(true)}
           >
-            <span className="text-xs tracking-[0.15em] uppercase hidden lg:block">Cart</span>
-            <div className="relative">
-              <ShoppingBag className="w-5 h-5 stroke-[1.5]" />
-              {cartCount > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-brand-700 text-white text-[10px] flex items-center justify-center rounded-full font-medium">
-                  {cartCount}
-                </span>
-              )}
-            </div>
+            <ShoppingBag className="w-5 h-5 stroke-[1.5]" />
+            {cartCount > 0 && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-brand-700 text-white text-[10px] flex items-center justify-center rounded-full font-medium">
+                {cartCount}
+              </span>
+            )}
           </button>
         </nav>
 
@@ -128,20 +116,11 @@ export const Navbar = () => {
             >
               <div className="h-24 px-6 flex items-center justify-between border-b border-brand-200/50">
                 <Link to="/" className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full overflow-hidden border border-brand-200">
-                    <img 
-                      src={getImageUrl("https://drive.google.com/uc?export=view&id=1TeWZGit2uwN2l9wPk6aJg1uolFMaGzg_")} 
-                      alt="Virendra" 
-                      className="w-full h-full object-cover"
-                      referrerPolicy="no-referrer"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800';
-                      }}
-                    />
+                  <div className="w-8 h-8 rounded-full overflow-hidden border border-brand-200 flex items-center justify-center bg-brand-100">
+                    <Leaf className="w-5 h-5 text-brand-700" />
                   </div>
-                  <span className="font-serif text-2xl font-light tracking-wide text-earth-900">
-                    Virendra
+                  <span className="font-serif text-xl font-light tracking-wide text-earth-900">
+                    Chanchal Ayurvedic
                   </span>
                 </Link>
                 <button 
@@ -156,7 +135,7 @@ export const Navbar = () => {
                   { name: 'Home', path: '/' },
                   { name: 'Shop', path: '/shop' },
                   ...(isAdmin ? [{ name: 'Admin Panel', path: '/admin' }] : []),
-                  { name: 'Our Story', path: '/about' },
+                  { name: 'About Us', path: '/about' },
                   { name: 'Contact', path: '/contact' },
                 ].map((link) => (
                   <Link

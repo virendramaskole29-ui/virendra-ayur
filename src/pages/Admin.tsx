@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
-import { LayoutDashboard, ShoppingCart, Package, LogOut, Plus, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, Package, LogOut, Plus, ShieldCheck, Calendar } from 'lucide-react';
 import { AdminProducts } from '../components/AdminProducts';
 import { AdminOrders } from '../components/AdminOrders';
+import { AdminBookings } from '../components/AdminBookings';
 import { seedDatabase } from '../lib/db';
 
 export const Admin = () => {
@@ -176,7 +177,7 @@ export const Admin = () => {
                 <p className="text-4xl font-serif font-bold text-earth-900">{stats.orders}</p>
               </div>
               
-              <div className="bg-white p-6 rounded-2xl shadow-sm border border-brand-200">
+              <div className="bg-white p-6 rounded-2xl shadow-sm border border-emerald-100">
                 <div className="flex items-center gap-4 mb-4">
                   <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-700">
                     <span className="text-xl font-bold">₹</span>

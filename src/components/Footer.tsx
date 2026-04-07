@@ -26,11 +26,11 @@ export const Footer = () => {
             <Link to="/" className="flex items-center gap-2 mb-6 text-white">
               <Leaf className="w-8 h-8 text-brand-400" />
               <span className="font-serif text-2xl font-semibold tracking-tight">
-                Virendra
+                Chanchal Ayurvedic
               </span>
             </Link>
             <p className="text-earth-300 mb-6 leading-relaxed">
-              Bringing the ancient wisdom of Ayurveda to modern life. Pure, natural, and sustainably sourced wellness products.
+              Experience natural healing with Ayurveda in the heart of Pachmarhi. Our wellness center offers traditional therapies for a balanced life.
             </p>
             <div className="flex gap-4">
               <a href="#" className="w-10 h-10 rounded-full bg-earth-800 flex items-center justify-center hover:bg-brand-600 transition-colors">
@@ -47,26 +47,25 @@ export const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h3 className="font-serif text-lg font-semibold mb-6 text-white">Quick Links</h3>
+            <h3 className="font-serif text-lg font-semibold mb-6 text-white">Explore</h3>
             <ul className="space-y-4">
-              <li><Link to="/shop" className="text-earth-300 hover:text-brand-400 transition-colors">Shop All</Link></li>
-              <li><Link to="/about" className="text-earth-300 hover:text-brand-400 transition-colors">Our Story</Link></li>
+              <li><Link to="/shop" className="text-earth-300 hover:text-brand-400 transition-colors">Shop Products</Link></li>
+              <li><Link to="/about" className="text-earth-300 hover:text-brand-400 transition-colors">About Us</Link></li>
               <li><Link to="/contact" className="text-earth-300 hover:text-brand-400 transition-colors">Contact Us</Link></li>
               {isAdmin && (
                 <li><Link to="/admin" className="text-brand-400 hover:text-white transition-colors font-medium">Admin Panel</Link></li>
               )}
-              <li><a href="#" className="text-earth-300 hover:text-brand-400 transition-colors">FAQs</a></li>
             </ul>
           </div>
 
-          {/* Categories */}
+          {/* Shop */}
           <div>
-            <h3 className="font-serif text-lg font-semibold mb-6 text-white">Categories</h3>
+            <h3 className="font-serif text-lg font-semibold mb-6 text-white">Shop</h3>
             <ul className="space-y-4">
+              <li><Link to="/shop?category=Herbal Oils" className="text-earth-300 hover:text-brand-400 transition-colors">Herbal Oils</Link></li>
+              <li><Link to="/shop?category=Wellness Tea" className="text-earth-300 hover:text-brand-400 transition-colors">Wellness Tea</Link></li>
+              <li><Link to="/shop?category=Skin Care" className="text-earth-300 hover:text-brand-400 transition-colors">Skin Care</Link></li>
               <li><Link to="/shop?category=Supplements" className="text-earth-300 hover:text-brand-400 transition-colors">Supplements</Link></li>
-              <li><Link to="/shop?category=Skincare" className="text-earth-300 hover:text-brand-400 transition-colors">Skincare</Link></li>
-              <li><Link to="/shop?category=Haircare" className="text-earth-300 hover:text-brand-400 transition-colors">Haircare</Link></li>
-              <li><Link to="/shop?category=Immunity" className="text-earth-300 hover:text-brand-400 transition-colors">Immunity</Link></li>
             </ul>
           </div>
 
@@ -91,7 +90,7 @@ export const Footer = () => {
         </div>
 
         <div className="border-t border-earth-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-earth-400">
-          <p>© {new Date().getFullYear()} Virendra. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Chanchal Ayurvedic Pachmarhi. All rights reserved.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-white transition-colors">Terms of Service</a>

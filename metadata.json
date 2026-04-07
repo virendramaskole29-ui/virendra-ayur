@@ -1,5 +1,5 @@
 {
-  "name": "Virendra",
-  "description": "Premium Ayurvedic e-commerce store with Google Sheets integration for orders.",
-  "requestFramePermissions": []
+  "name": "Chanchal Ayurvedic Pachmarhi",
+  "description": "A modern, professional Ayurvedic wellness center website for Chanchal Ayurvedic in Pachmarhi, Madhya Pradesh, India, featuring natural healing, forest-inspired design, and online booking.",
+  "requestFramePermissions": ["geolocation"]
 }

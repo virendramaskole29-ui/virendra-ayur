@@ -30,5 +30,11 @@ service cloud.firestore {
     match /admins/{adminId} {
       allow read, write: if isAdmin();
     }
+
+    // Bookings: Everyone can create, only Admin can read/write
+    match /bookings/{bookingId} {
+      allow create: if true;
+      allow read, write: if isAdmin();
+    }
   }
 }

@@ -11,11 +11,13 @@ import { seedDatabase } from '../lib/db';
 export const Admin = () => {
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'dashboard' | 'products' | 'orders' | 'bookings'>('dashboard');
   const [stats, setStats] = useState({ products: 0, orders: 0, revenue: 0 });
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log("Auth state changed:", user?.email);
       setUser(user);
       // Check if user is admin (virendramaskole29@gmail.com)
       if (user?.email?.toLowerCase() === 'virendramaskole29@gmail.com') {
@@ -23,13 +25,14 @@ export const Admin = () => {
       } else {
         setIsAdmin(false);
       }
+      setIsAuthLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
 
   useEffect(() => {
-    if (!isAdmin) return;
+    if (!isAdmin || isAuthLoading) return;
 
     // Seed database if empty
     seedDatabase();
@@ -57,16 +60,34 @@ export const Admin = () => {
     };
   }, [isAdmin]);
 
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
   const handleLogin = async () => {
+    setIsLoggingIn(true);
     const provider = new GoogleAuthProvider();
     try {
-      await signInWithPopup(auth, provider);
-    } catch (error) {
+      const result = await signInWithPopup(auth, provider);
+      console.log("Login successful:", result.user.email);
+      if (result.user.email?.toLowerCase() !== 'virendramaskole29@gmail.com') {
+        alert("Access Denied: You are not an admin.");
+      }
+    } catch (error: any) {
       console.error("Login failed", error);
+      alert("Login failed: " + (error.message || "Unknown error"));
+    } finally {
+      setIsLoggingIn(false);
     }
   };
 
   const handleLogout = () => signOut(auth);
+
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen bg-brand-50 flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-brand-200 border-t-brand-600 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   if (!user) {
     return (
@@ -77,10 +98,20 @@ export const Admin = () => {
           <p className="text-earth-600 mb-8">Access the Virendra Admin Panel to manage products and orders.</p>
           <button 
             onClick={handleLogin}
-            className="w-full py-3 bg-brand-700 text-white rounded-xl font-medium hover:bg-brand-800 transition-colors flex items-center justify-center gap-2"
+            disabled={isLoggingIn}
+            className="w-full py-3 bg-brand-700 text-white rounded-xl font-medium hover:bg-brand-800 transition-colors flex items-center justify-center gap-2 disabled:opacity-70"
           >
-            Sign in with Google
+            {isLoggingIn ? "Signing in..." : "Sign in with Google"}
           </button>
+          
+          <div className="mt-8 pt-6 border-t border-earth-100 text-left">
+            <h3 className="text-sm font-semibold text-earth-900 mb-2">Trouble logging in?</h3>
+            <ul className="text-xs text-earth-600 space-y-2 list-disc pl-4">
+              <li>Make sure you are using <strong>virendramaskole29@gmail.com</strong></li>
+              <li>If using Netlify, ensure your Netlify URL is added to <strong>Firebase Console &gt; Auth &gt; Settings &gt; Authorized domains</strong></li>
+              <li>Check if popups are blocked by your browser</li>
+            </ul>
+          </div>
         </div>
       </div>
     );

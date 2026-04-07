@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Search, Package, Truck, CheckCircle2, Clock, AlertCircle, ArrowRight, MapPin, Phone, Mail } from 'lucide-react';
 import { db } from '../firebase';
-import { collection, query, where, getDocs, limit } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { formatPrice } from '../lib/utils';
 import { auth } from '../firebase';
 
@@ -72,26 +72,28 @@ export const TrackOrder = () => {
     setError('');
     setOrder(null);
 
+    // Normalize phone number for search (remove spaces, dashes, etc.)
+    const normalizedPhone = phone.replace(/\D/g, '');
+    const normalizedOrderId = orderId.trim().toUpperCase();
+
     try {
-      const q = query(
-        collection(db, 'orders'), 
-        where('orderId', '==', orderId.trim().toUpperCase()),
-        where('customerPhone', '==', phone.trim()),
-        limit(1)
-      );
+      const docId = `${normalizedOrderId}_${normalizedPhone}`;
+      const docRef = doc(db, 'orders', docId);
+      const docSnap = await getDoc(docRef);
       
-      const querySnapshot = await getDocs(q);
-      
-      if (querySnapshot.empty) {
+      if (!docSnap.exists()) {
         setError('Order not found. Please check your Order ID and Phone Number.');
       } else {
-        const orderData = querySnapshot.docs[0].data();
-        setOrder({ id: querySnapshot.docs[0].id, ...orderData });
+        const orderData = docSnap.data();
+        setOrder({ id: docSnap.id, ...orderData });
       }
     } catch (err) {
       console.error("Error tracking order:", err);
+      const normalizedOrderId = orderId.trim().toUpperCase();
+      const normalizedPhone = phone.replace(/\D/g, '');
+      const docId = `${normalizedOrderId}_${normalizedPhone}`;
       if (err instanceof Error && err.message.includes('permission')) {
-        handleFirestoreError(err, OperationType.LIST, 'orders');
+        handleFirestoreError(err, OperationType.GET, `orders/${docId}`);
       }
       setError('An error occurred while tracking your order. Please try again later.');
     } finally {

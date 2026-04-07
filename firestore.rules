@@ -86,11 +86,16 @@ service cloud.firestore {
     // - Anyone can read/list IF they provide the specific orderId AND customerPhone (for tracking)
     // - Admin has full access
     match /orders/{docId} {
-      allow get: if isAdmin();
-      allow list: if isAdmin() || (
-        request.query.limit <= 1 && 
-        request.query.filters.keys().hasAll(['orderId', 'customerPhone'])
+      // Allow get if admin OR if the docId matches the orderId_phone pattern
+      // This is secure because you need to know both to guess the docId
+      allow get: if isAdmin() || (
+        resource.data.orderId != null && 
+        resource.data.customerPhone != null &&
+        docId == resource.data.orderId + "_" + resource.data.customerPhone
       );
+      
+      // List is only for admin
+      allow list: if isAdmin();
       
       // Allow create for guest checkout
       allow create: if isValidOrder(request.resource.data);

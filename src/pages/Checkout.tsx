@@ -4,7 +4,7 @@ import { useCart } from '../store/CartContext';
 import { formatPrice, getImageUrl } from '../lib/utils';
 import { CheckCircle2, ArrowRight, ShieldCheck, Copy } from 'lucide-react';
 import { db } from '../firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 export const Checkout = () => {
   const { items, cartTotal, clearCart } = useCart();
@@ -42,10 +42,13 @@ export const Checkout = () => {
     const newOrderId = generateOrderId();
     setOrderId(newOrderId);
 
+    // Normalize phone number (remove spaces, dashes, etc.)
+    const normalizedPhone = formData.phone.replace(/\D/g, '');
+
     const orderData = {
       orderId: newOrderId,
       customerName: formData.name,
-      customerPhone: formData.phone,
+      customerPhone: normalizedPhone,
       customerEmail: formData.email,
       address: formData.address,
       city: formData.city,
@@ -66,8 +69,9 @@ export const Checkout = () => {
     console.log('Saving order to Firestore and Google Sheets:', orderData);
 
     try {
-      // 1. Save to Firestore
-      await addDoc(collection(db, 'orders'), orderData);
+      // 1. Save to Firestore (using orderId_phone as doc ID for secure tracking)
+      const docId = `${newOrderId}_${normalizedPhone}`;
+      await setDoc(doc(db, 'orders', docId), orderData);
       console.log('Order saved to Firestore');
 
       // 2. Save to Google Sheets (Legacy/Backup)

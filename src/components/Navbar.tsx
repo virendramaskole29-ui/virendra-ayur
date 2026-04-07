@@ -42,6 +42,7 @@ export const Navbar = () => {
         <nav className="hidden md:flex items-center gap-8 flex-1">
           <Link to="/" className={cn("text-xs tracking-[0.15em] uppercase transition-colors hover:text-brand-600", location.pathname === '/' ? "text-brand-700 font-medium" : "text-earth-500")}>Home</Link>
           <Link to="/shop" className={cn("text-xs tracking-[0.15em] uppercase transition-colors hover:text-brand-600", location.pathname === '/shop' ? "text-brand-700 font-medium" : "text-earth-500")}>Shop</Link>
+          <Link to="/track-order" className={cn("text-xs tracking-[0.15em] uppercase transition-colors hover:text-brand-600", location.pathname === '/track-order' ? "text-brand-700 font-medium" : "text-earth-500")}>Track Order</Link>
           {isAdmin && (
             <Link to="/admin" className={cn("text-xs tracking-[0.15em] uppercase transition-colors hover:text-brand-600 flex items-center gap-1.5", location.pathname === '/admin' ? "text-brand-700 font-medium" : "text-earth-500")}>
               <ShieldCheck className="w-3.5 h-3.5" />
@@ -134,6 +135,7 @@ export const Navbar = () => {
                 {[
                   { name: 'Home', path: '/' },
                   { name: 'Shop', path: '/shop' },
+                  { name: 'Track Order', path: '/track-order' },
                   ...(isAdmin ? [{ name: 'Admin Panel', path: '/admin' }] : []),
                   { name: 'About Us', path: '/about' },
                   { name: 'Contact', path: '/contact' },

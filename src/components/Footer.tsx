@@ -50,6 +50,7 @@ export const Footer = () => {
             <h3 className="font-serif text-lg font-semibold mb-6 text-white">Explore</h3>
             <ul className="space-y-4">
               <li><Link to="/shop" className="text-earth-300 hover:text-brand-400 transition-colors">Shop Products</Link></li>
+              <li><Link to="/track-order" className="text-earth-300 hover:text-brand-400 transition-colors">Track Order</Link></li>
               <li><Link to="/about" className="text-earth-300 hover:text-brand-400 transition-colors">About Us</Link></li>
               <li><Link to="/contact" className="text-earth-300 hover:text-brand-400 transition-colors">Contact Us</Link></li>
               {isAdmin && (

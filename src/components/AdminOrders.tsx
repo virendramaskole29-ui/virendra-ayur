@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { collection, onSnapshot, query, orderBy, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 import { ShoppingBag, Clock, CheckCircle, Truck, XCircle, ChevronDown, ExternalLink, Trash2 } from 'lucide-react';
+import { handleFirestoreError, OperationType } from '../lib/utils';
 
 export const AdminOrders = () => {
   const [orders, setOrders] = useState<any[]>([]);
@@ -11,6 +12,8 @@ export const AdminOrders = () => {
     const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setOrders(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, 'orders');
     });
     return () => unsubscribe();
   }, []);
@@ -19,7 +22,7 @@ export const AdminOrders = () => {
     try {
       await updateDoc(doc(db, 'orders', orderId), { status: newStatus });
     } catch (error) {
-      console.error("Error updating status:", error);
+      handleFirestoreError(error, OperationType.UPDATE, `orders/${orderId}`);
     }
   };
 
@@ -28,7 +31,7 @@ export const AdminOrders = () => {
       try {
         await deleteDoc(doc(db, 'orders', id));
       } catch (error) {
-        console.error("Error deleting order:", error);
+        handleFirestoreError(error, OperationType.DELETE, `orders/${id}`);
       }
     }
   };

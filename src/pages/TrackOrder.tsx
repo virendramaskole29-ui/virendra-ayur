@@ -4,16 +4,69 @@ import { Search, Package, Truck, CheckCircle2, Clock, AlertCircle, ArrowRight, M
 import { db } from '../firebase';
 import { collection, query, where, getDocs, limit } from 'firebase/firestore';
 import { formatPrice } from '../lib/utils';
+import { auth } from '../firebase';
+
+enum OperationType {
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  LIST = 'list',
+  GET = 'get',
+  WRITE = 'write',
+}
+
+interface FirestoreErrorInfo {
+  error: string;
+  operationType: OperationType;
+  path: string | null;
+  authInfo: {
+    userId: string | undefined;
+    email: string | null | undefined;
+    emailVerified: boolean | undefined;
+    isAnonymous: boolean | undefined;
+    tenantId: string | null | undefined;
+    providerInfo: {
+      providerId: string;
+      displayName: string | null;
+      email: string | null;
+      photoUrl: string | null;
+    }[];
+  }
+}
+
+function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+  const errInfo: FirestoreErrorInfo = {
+    error: error instanceof Error ? error.message : String(error),
+    authInfo: {
+      userId: auth.currentUser?.uid,
+      email: auth.currentUser?.email,
+      emailVerified: auth.currentUser?.emailVerified,
+      isAnonymous: auth.currentUser?.isAnonymous,
+      tenantId: auth.currentUser?.tenantId,
+      providerInfo: auth.currentUser?.providerData.map(provider => ({
+        providerId: provider.providerId,
+        displayName: provider.displayName,
+        email: provider.email,
+        photoUrl: provider.photoURL
+      })) || []
+    },
+    operationType,
+    path
+  }
+  console.error('Firestore Error: ', JSON.stringify(errInfo));
+  throw new Error(JSON.stringify(errInfo));
+}
 
 export const TrackOrder = () => {
   const [orderId, setOrderId] = useState('');
+  const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState<any>(null);
   const [error, setError] = useState('');
 
   const handleTrack = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!orderId.trim()) return;
+    if (!orderId.trim() || !phone.trim()) return;
 
     setLoading(true);
     setError('');
@@ -23,19 +76,23 @@ export const TrackOrder = () => {
       const q = query(
         collection(db, 'orders'), 
         where('orderId', '==', orderId.trim().toUpperCase()),
+        where('customerPhone', '==', phone.trim()),
         limit(1)
       );
       
       const querySnapshot = await getDocs(q);
       
       if (querySnapshot.empty) {
-        setError('Order not found. Please check your Order ID and try again.');
+        setError('Order not found. Please check your Order ID and Phone Number.');
       } else {
         const orderData = querySnapshot.docs[0].data();
         setOrder({ id: querySnapshot.docs[0].id, ...orderData });
       }
     } catch (err) {
       console.error("Error tracking order:", err);
+      if (err instanceof Error && err.message.includes('permission')) {
+        handleFirestoreError(err, OperationType.LIST, 'orders');
+      }
       setError('An error occurred while tracking your order. Please try again later.');
     } finally {
       setLoading(false);
@@ -68,17 +125,30 @@ export const TrackOrder = () => {
 
         {/* Search Bar */}
         <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-brand-200 mb-12">
-          <form onSubmit={handleTrack} className="flex flex-col md:flex-row gap-4">
-            <div className="relative flex-grow">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-earth-400" />
-              <input 
-                type="text" 
-                value={orderId}
-                onChange={(e) => setOrderId(e.target.value)}
-                placeholder="Enter Order ID (e.g. VIR-123456-789)"
-                className="w-full pl-12 pr-4 py-4 rounded-2xl border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-brand-50/30 font-mono"
-                required
-              />
+          <form onSubmit={handleTrack} className="flex flex-col gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-earth-400" />
+                <input 
+                  type="text" 
+                  value={orderId}
+                  onChange={(e) => setOrderId(e.target.value)}
+                  placeholder="Order ID (e.g. VIR-123456-789)"
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-brand-50/30 font-mono"
+                  required
+                />
+              </div>
+              <div className="relative">
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-earth-400" />
+                <input 
+                  type="tel" 
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Phone Number"
+                  className="w-full pl-12 pr-4 py-4 rounded-2xl border border-brand-200 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent bg-brand-50/30"
+                  required
+                />
+              </div>
             </div>
             <button 
               type="submit"

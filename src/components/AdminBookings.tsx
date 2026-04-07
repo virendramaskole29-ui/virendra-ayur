@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { collection, onSnapshot, query, orderBy, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 import { Calendar, Clock, User, Phone, MessageSquare, Trash2, CheckCircle, XCircle } from 'lucide-react';
+import { handleFirestoreError, OperationType } from '../lib/utils';
 
 export const AdminBookings = () => {
   const [bookings, setBookings] = useState<any[]>([]);
@@ -16,6 +17,8 @@ export const AdminBookings = () => {
       }));
       setBookings(bookingsData);
       setLoading(false);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, 'bookings');
     });
 
     return () => unsubscribe();
@@ -25,7 +28,7 @@ export const AdminBookings = () => {
     try {
       await updateDoc(doc(db, 'bookings', id), { status });
     } catch (error) {
-      console.error("Error updating booking status:", error);
+      handleFirestoreError(error, OperationType.UPDATE, `bookings/${id}`);
     }
   };
 
@@ -34,7 +37,7 @@ export const AdminBookings = () => {
     try {
       await deleteDoc(doc(db, 'bookings', id));
     } catch (error) {
-      console.error("Error deleting booking:", error);
+      handleFirestoreError(error, OperationType.DELETE, `bookings/${id}`);
     }
   };
 

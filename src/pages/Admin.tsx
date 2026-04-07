@@ -18,7 +18,7 @@ export const Admin = () => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       // Check if user is admin (virendramaskole29@gmail.com)
-      if (user?.email === 'virendramaskole29@gmail.com') {
+      if (user?.email?.toLowerCase() === 'virendramaskole29@gmail.com') {
         setIsAdmin(true);
       } else {
         setIsAdmin(false);
@@ -37,6 +37,8 @@ export const Admin = () => {
     // Fetch stats
     const unsubProducts = onSnapshot(collection(db, 'products'), (snapshot) => {
       setStats(prev => ({ ...prev, products: snapshot.size }));
+    }, (error) => {
+      console.error("Error fetching products stats:", error);
     });
 
     const unsubOrders = onSnapshot(collection(db, 'orders'), (snapshot) => {
@@ -45,6 +47,8 @@ export const Admin = () => {
         totalRevenue += doc.data().total || 0;
       });
       setStats(prev => ({ ...prev, orders: snapshot.size, revenue: totalRevenue }));
+    }, (error) => {
+      console.error("Error fetching orders stats:", error);
     });
 
     return () => {

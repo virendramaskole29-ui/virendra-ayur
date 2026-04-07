@@ -3,6 +3,9 @@ import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Leaf, ShieldCheck, MapPin, Phone, Calendar, Star, Quote, ShoppingBag } from 'lucide-react';
 import { getImageUrl } from '../lib/utils';
+import { db } from '../firebase';
+import { collection, onSnapshot, query, orderBy, limit } from 'firebase/firestore';
+import { ProductCard } from '../components/ProductCard';
 
 const heroImages = [
   "https://images.unsplash.com/photo-1545191215-220a5672fc9e?auto=format&fit=crop&q=80&w=1200", // Forest/Nature
@@ -52,6 +55,17 @@ const testimonials = [
 
 export const Home = () => {
   const [currentImage, setCurrentImage] = useState(0);
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'), limit(4));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -181,59 +195,30 @@ export const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                name: "Brahmi Hair Oil",
-                price: 450,
-                image: "https://images.unsplash.com/photo-1611078813455-84227c813098?auto=format&fit=crop&q=80&w=800",
-                category: "Herbal Oils"
-              },
-              {
-                name: "Ashwagandha Powder",
-                price: 350,
-                image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&q=80&w=800",
-                category: "Supplements"
-              },
-              {
-                name: "Herbal Detox Tea",
-                price: 299,
-                image: "https://images.unsplash.com/photo-1544787210-2827448b303c?auto=format&fit=crop&q=80&w=800",
-                category: "Wellness Tea"
-              },
-              {
-                name: "Kumkumadi Tailam",
-                price: 850,
-                image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&q=80&w=800",
-                category: "Skin Care"
-              }
-            ].map((product, index) => (
-              <motion.div
-                key={product.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="group cursor-pointer"
-              >
-                <Link to="/shop">
-                  <div className="aspect-square rounded-3xl overflow-hidden bg-brand-50 mb-6 relative">
-                    <img 
-                      src={product.image} 
-                      alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute top-4 left-4">
-                      <span className="px-3 py-1 bg-white/90 backdrop-blur-md text-[10px] font-bold uppercase tracking-widest text-earth-900 rounded-full shadow-sm">
-                        {product.category}
-                      </span>
-                    </div>
-                  </div>
-                  <h4 className="text-xl font-serif text-earth-900 mb-2 group-hover:text-brand-700 transition-colors">{product.name}</h4>
-                  <p className="text-brand-600 font-medium">₹{product.price}</p>
-                </Link>
-              </motion.div>
-            ))}
+            {loading ? (
+              [1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-[400px] bg-white rounded-3xl animate-pulse border border-brand-100" />
+              ))
+            ) : (
+              products.map((product, index) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <ProductCard product={product} />
+                </motion.div>
+              ))
+            )}
           </div>
+          
+          {products.length === 0 && !loading && (
+            <div className="text-center py-12">
+              <p className="text-earth-500">No products available at the moment.</p>
+            </div>
+          )}
         </div>
       </section>
 

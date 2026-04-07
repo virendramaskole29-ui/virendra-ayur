@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, serverTimestamp, query, orderBy } from 'firebase/firestore';
 import { Plus, Edit2, Trash2, X, Save, Image as ImageIcon } from 'lucide-react';
-import { getImageUrl } from '../lib/utils';
+import { getImageUrl, handleFirestoreError, OperationType } from '../lib/utils';
 
 export const AdminProducts = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -24,6 +24,8 @@ export const AdminProducts = () => {
     const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setProducts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, 'products');
     });
     return () => unsubscribe();
   }, []);
@@ -63,7 +65,7 @@ export const AdminProducts = () => {
         isFeatured: false
       });
     } catch (error) {
-      console.error("Error saving product:", error);
+      handleFirestoreError(error, editingProduct ? OperationType.UPDATE : OperationType.CREATE, editingProduct ? `products/${editingProduct.id}` : 'products');
     }
   };
 
@@ -88,7 +90,7 @@ export const AdminProducts = () => {
       try {
         await deleteDoc(doc(db, 'products', id));
       } catch (error) {
-        console.error("Error deleting product:", error);
+        handleFirestoreError(error, OperationType.DELETE, `products/${id}`);
       }
     }
   };

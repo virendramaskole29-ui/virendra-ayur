@@ -11,7 +11,7 @@ import { seedDatabase } from '../lib/db';
 export const Admin = () => {
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'products' | 'orders'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'products' | 'orders' | 'bookings'>('dashboard');
   const [stats, setStats] = useState({ products: 0, orders: 0, revenue: 0 });
 
   useEffect(() => {
@@ -134,6 +134,13 @@ export const Admin = () => {
             <ShoppingCart className="w-5 h-5" />
             Orders
           </button>
+          <button 
+            onClick={() => setActiveTab('bookings')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${activeTab === 'bookings' ? 'bg-brand-700 text-white' : 'text-earth-400 hover:bg-earth-800 hover:text-white'}`}
+          >
+            <Calendar className="w-5 h-5" />
+            Bookings
+          </button>
         </nav>
 
         <div className="p-4 border-t border-earth-800">
@@ -215,6 +222,7 @@ export const Admin = () => {
 
         {activeTab === 'products' && <AdminProducts />}
         {activeTab === 'orders' && <AdminOrders />}
+        {activeTab === 'bookings' && <AdminBookings />}
       </main>
     </div>
   );

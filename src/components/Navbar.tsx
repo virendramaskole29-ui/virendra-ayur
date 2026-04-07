@@ -20,7 +20,7 @@ export const Navbar = () => {
     return () => unsubscribe();
   }, []);
 
-  const isAdmin = user?.email === 'virendramaskole29@gmail.com';
+  const isAdmin = user?.email?.toLowerCase() === 'virendramaskole29@gmail.com';
 
   // Close mobile menu when route changes
   React.useEffect(() => {
@@ -67,6 +67,9 @@ export const Navbar = () => {
         <nav className="hidden md:flex items-center justify-end gap-8 flex-1">
           <Link to="/about" className={cn("text-xs tracking-[0.15em] uppercase transition-colors hover:text-brand-600", location.pathname === '/about' ? "text-brand-700 font-medium" : "text-earth-500")}>About</Link>
           <Link to="/contact" className={cn("text-xs tracking-[0.15em] uppercase transition-colors hover:text-brand-600", location.pathname === '/contact' ? "text-brand-700 font-medium" : "text-earth-500")}>Contact</Link>
+          {!user && (
+            <Link to="/admin" className="text-xs tracking-[0.15em] uppercase text-earth-500 hover:text-brand-600">Login</Link>
+          )}
           
           <button 
             className="relative p-2 text-earth-700 hover:text-brand-700 transition-colors"
@@ -139,6 +142,7 @@ export const Navbar = () => {
                   ...(isAdmin ? [{ name: 'Admin Panel', path: '/admin' }] : []),
                   { name: 'About Us', path: '/about' },
                   { name: 'Contact', path: '/contact' },
+                  ...(!user ? [{ name: 'Admin Login', path: '/admin' }] : []),
                 ].map((link) => (
                   <Link
                     key={link.path}
